@@ -230,7 +230,21 @@ function serveFile(res, file, fallbackHtml) {
 async function handleRequest(req, res) {
   try {
     const url = new URL(req.url, 'http://local');
-    const p = url.pathname;
+    // Vercel gateway (temp copy only): Vercel's file-upload deployment builds
+    // only api/index.js into a function, so vercel.json rewrites every route
+    // to /api/index?path=<original>. Restore the original path here.
+    let p = url.pathname;
+    if (p === '/api/index' || p === '/api/index.js') {
+      const apiGw = url.searchParams.get('api');
+      const pathGw = url.searchParams.get('path');
+      if (apiGw !== null) {
+        const gw = apiGw.replace(/^\/+/, '');
+        p = gw ? '/api/' + gw : '/api/services';
+      } else if (pathGw !== null) {
+        const gw = pathGw.replace(/^\/+/, '');
+        p = gw ? '/' + gw : '/';
+      }
+    }
     // Static uploads
     if (p.startsWith('/uploads/')) {
       const safe = path.normalize(path.join(UPLOAD_DIR, p.slice('/uploads/'.length))).replace(/^(\.\.(\/|\\|$))+/, '');
