@@ -1,0 +1,27 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin panel — Apnar digital (local)</title><style>body{font-family:system-ui;background:#111;color:#eee;max-width:900px;margin:0 auto;padding:20px}input,textarea,select{width:100%;padding:8px;margin:4px 0;background:#222;color:#eee;border:1px solid #444;border-radius:8px}button{background:#ff7a1a;color:#fff;border:0;padding:8px 14px;border-radius:8px;cursor:pointer;margin:4px 4px 4px 0}.card{background:#1c1c1c;border:1px solid #333;border-radius:12px;padding:14px;margin:10px 0}img{max-width:200px}</style></head>
+<body><h1>Admin panel (local)</h1><p><a href="/" style="color:#ff7a1a">Browse the website freely (as a visitor)</a> — admin can browse like a visitor too; listing taps still ask for login when logged out.</p><div id="login"><input id="email" placeholder="Admin email"><input id="pw" type="password" placeholder="Password"><button onclick="login()">Log in</button><p id="msg"></p><p>First run? <a href="/admin-setup" style="color:#ff7a1a">Create admin account</a></p></div>
+<div id="panel" style="display:none"><p id="who"></p><button onclick="logout()">Log out</button>
+<h2>Upload image</h2><input type="file" id="file"><button onclick="upload()">Upload</button><p id="upmsg"></p>
+<h2>Edit service text</h2><select id="svc"></select><input id="stitle" placeholder="Service title"><textarea id="sshort" placeholder="Short"></textarea><textarea id="sfull" placeholder="Full"></textarea><button onclick="saveService()">Save service text</button>
+<h2>Listings</h2><div id="items"></div>
+<h3>Add listing</h3><input id="ntitle" placeholder="Title"><input id="nblurb" placeholder="Text / blurb"><input id="nprice" placeholder="Demo price (not for Prompt)"><input id="nstock" placeholder="Stock (not for Prompt)"><input id="nimage" placeholder="Image URL (from upload above)"><button onclick="addItem()">Add listing</button>
+<h2>Posts</h2><input id="ptitle" placeholder="Post title"><textarea id="pbody" placeholder="Post body"></textarea><input id="pimage" placeholder="Image URL"><button onclick="addPost()">Add post</button><div id="posts"></div>
+</div>
+<script>
+async function api(p,m,b){const r=await fetch(p,{method:m||'GET',headers:{'Content-Type':'application/json'},body:b?JSON.stringify(b):undefined});return r.json()}
+async function login(){const d=await api('/api/login','POST',{email:email.value,password:pw.value});msg.textContent=d.ok?'Logged in':d.error;if(d.ok)show()}
+async function logout(){await api('/api/logout','POST',{});location.reload()}
+async function upload(){const f=file.files[0];if(!f)return;const fd=new FormData();fd.append('image',f);const r=await fetch('/api/admin/upload',{method:'POST',body:fd});const d=await r.json();upmsg.textContent=d.ok?('Uploaded: '+d.url):d.error;if(d.ok)nimage.value=d.url}
+let services=[];
+async function show(){const me=await api('/api/me');if(!me.user||me.user.role!=='admin'){msg.textContent='Admin login required.';return}login.style.display='none';panel.style.display='block';who.textContent='Admin: '+me.user.email;
+const s=await api('/api/services');services=s.services;svc.innerHTML=services.map(x=>`<option value="${x.slug}">${x.name}</option>`).join('');renderItems();const p=await api('/api/posts');posts.innerHTML=p.posts.map(x=>`<div class="card"><h3>${x.title}</h3><p>${x.body}</p><button onclick="delPost('${x.id}')">Delete post</button></div>`).join('')}
+function renderItems(){const s=services.find(x=>x.slug===svc.value)||services[0];if(!s)return;stitle.value=s.title;sshort.value=s.short;sfull.value=s.full;items.innerHTML=s.items.map(i=>`<div class="card"><input value="${i.title}" id="t-${i.id}"><input value="${i.blurb}" id="b-${i.id}">${s.slug!=='prompt'?`<input value="${i.price||''}" id="p-${i.id}"><input value="${i.stock||''}" id="s-${i.id}">`:''}<input value="${i.image||''}" id="i-${i.id}" placeholder="Image URL"><button onclick="saveItem('${i.id}')">Save</button><button onclick="delItem('${i.id}')">Delete</button></div>`).join('')}
+svc.onchange=renderItems;
+async function saveService(){const d=await api('/api/admin/service','POST',{slug:svc.value,title:stitle.value,short:sshort.value,full:sfull.value});alert(d.ok?'Saved':'Failed: '+(d.error||''));show()}
+async function addItem(){const d=await api('/api/admin/item','POST',{slug:svc.value,title:ntitle.value,blurb:nblurb.value,price:nprice.value,stock:nstock.value,image:nimage.value});alert(d.ok?'Added':'Failed');show()}
+async function saveItem(id){const b={title:document.getElementById('t-'+id).value,blurb:document.getElementById('b-'+id).value,image:document.getElementById('i-'+id).value};const pe=document.getElementById('p-'+id);if(pe){b.price=pe.value;b.stock=document.getElementById('s-'+id).value}const d=await api('/api/admin/item/'+id,'PUT',b);alert(d.ok?'Saved':'Failed');show()}
+async function delItem(id){if(!confirm('Delete this listing?'))return;await api('/api/admin/item/'+id,'DELETE');show()}
+async function addPost(){const d=await api('/api/admin/post','POST',{title:ptitle.value,body:pbody.value,image:pimage.value});alert(d.ok?'Added':'Failed');show()}
+async function delPost(id){await api('/api/admin/post/'+id,'DELETE');show()}
+show();
+</script></body></html>

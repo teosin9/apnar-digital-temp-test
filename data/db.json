@@ -1,0 +1,209 @@
+{
+  "users": [],
+  "sessions": [],
+  "posts": [],
+  "services": [
+    {
+      "slug": "course",
+      "name": "Course",
+      "title": "YouTube & Facebook Growth Course",
+      "short": "এই Course টা দিয়ে আপনি YouTube আর Facebook এ easily grow করতে পারবেন — channel/page শুরু থেকে এমন content বানানো পর্যন্ত, যা মানুষ আসলেই দেখে।",
+      "full": "এই Course টা beginner আর creator দের জন্য, যারা আন্দাজে না, step-by-step YouTube আর Facebook এ grow হতে চান।",
+      "items": [
+        {
+          "id": "course-1",
+          "title": "Channel আর page setup",
+          "blurb": "Channel আর page ঠিকমতো setup করা",
+          "price": "Demo ৳999",
+          "stock": "Available",
+          "image": ""
+        },
+        {
+          "id": "course-2",
+          "title": "Content idea plan",
+          "blurb": "Content idea plan করা",
+          "price": "Demo ৳799",
+          "stock": "Available",
+          "image": ""
+        },
+        {
+          "id": "course-3",
+          "title": "মানুষ ধরে রাখে এমন video",
+          "blurb": "মানুষ ধরে রাখে এমন video বানানো",
+          "price": "Demo ৳1,299",
+          "stock": "Available",
+          "image": ""
+        },
+        {
+          "id": "course-4",
+          "title": "Title আর hook লেখা",
+          "blurb": "ভালো title আর hook লেখা",
+          "price": "Demo ৳699",
+          "stock": "Available",
+          "image": ""
+        },
+        {
+          "id": "course-5",
+          "title": "Algorithm এর basic",
+          "blurb": "Algorithm এর basic বোঝা",
+          "price": "Demo ৳899",
+          "stock": "Available",
+          "image": ""
+        },
+        {
+          "id": "course-6",
+          "title": "Analytics বোঝা",
+          "blurb": "Analytics বোঝা",
+          "price": "Demo ৳899",
+          "stock": "Available",
+          "image": ""
+        },
+        {
+          "id": "course-7",
+          "title": "Regular থাকা",
+          "blurb": "Regular থাকা",
+          "price": "Demo ৳599",
+          "stock": "Out of stock",
+          "image": ""
+        }
+      ]
+    },
+    {
+      "slug": "prompt",
+      "name": "Prompt",
+      "title": "AI Video Prompt",
+      "short": "AI video বানাতে চান? এই Prompt গুলো শুধু copy-paste করলেই হবে — নিজের মতো একটু customize করে নিলেই done।",
+      "full": "AI video আর অন্য AI content বানানোর জন্য ready-made Prompt এর collection।",
+      "items": [
+        {
+          "id": "prompt-1",
+          "title": "Cinematic",
+          "blurb": "Cinematic video prompt",
+          "image": ""
+        },
+        {
+          "id": "prompt-2",
+          "title": "Story Prompt",
+          "blurb": "Story video prompt",
+          "image": ""
+        },
+        {
+          "id": "prompt-3",
+          "title": "Product video",
+          "blurb": "Product video prompt",
+          "image": ""
+        },
+        {
+          "id": "prompt-4",
+          "title": "Faceless video",
+          "blurb": "Faceless video prompt",
+          "image": ""
+        },
+        {
+          "id": "prompt-5",
+          "title": "Shorts আর Reels",
+          "blurb": "Shorts আর Reels prompt",
+          "image": ""
+        }
+      ]
+    },
+    {
+      "slug": "tool",
+      "name": "Tool",
+      "title": "AI & Creator Tool and Extension",
+      "short": "সময় বাঁচাতে আর fast কাজ করতে creator দের জন্য দরকারি Tool আর Extension গুলো — সব এক জায়গায়।",
+      "full": "Creator, AI user আর daily কাজের জন্য বাছাই করা Tool আর browser Extension এর set।",
+      "items": [
+        {
+          "id": "tool-1",
+          "title": "AI দিয়ে বানানো",
+          "blurb": "AI দিয়ে বানানো",
+          "price": "Demo ৳499",
+          "stock": "Available",
+          "image": ""
+        },
+        {
+          "id": "tool-2",
+          "title": "Editing",
+          "blurb": "Editing tool",
+          "price": "Demo ৳499",
+          "stock": "Available",
+          "image": ""
+        },
+        {
+          "id": "tool-3",
+          "title": "Research",
+          "blurb": "Research tool",
+          "price": "Demo ৳499",
+          "stock": "Available",
+          "image": ""
+        },
+        {
+          "id": "tool-4",
+          "title": "Content idea",
+          "blurb": "Content idea tool",
+          "price": "Demo ৳499",
+          "stock": "Available",
+          "image": ""
+        },
+        {
+          "id": "tool-5",
+          "title": "Productivity",
+          "blurb": "Productivity tool",
+          "price": "Demo ৳499",
+          "stock": "Out of stock",
+          "image": ""
+        }
+      ]
+    },
+    {
+      "slug": "product",
+      "name": "Product",
+      "title": "Premium Account & Ready-Made Asset",
+      "short": "Product গুলো কি buy করবেন? Gemini Pro, CapCut Pro, premium account, AI token, ready Facebook Page আর YouTube Channel — সব ready to use।",
+      "full": "Creator দের জন্য ready to use digital Product — Gemini Pro, CapCut Pro আর অন্য premium account, AI token আর credit, ready Facebook Page আর YouTube Channel।",
+      "items": [
+        {
+          "id": "product-1",
+          "title": "Gemini Pro",
+          "blurb": "Gemini Pro premium account",
+          "price": "Demo ৳1,850",
+          "stock": "Available",
+          "image": ""
+        },
+        {
+          "id": "product-2",
+          "title": "CapCut Pro",
+          "blurb": "CapCut Pro premium account",
+          "price": "Demo ৳1,200",
+          "stock": "Available",
+          "image": ""
+        },
+        {
+          "id": "product-3",
+          "title": "AI token",
+          "blurb": "AI token আর credit",
+          "price": "Demo ৳999",
+          "stock": "Available",
+          "image": ""
+        },
+        {
+          "id": "product-4",
+          "title": "Ready Facebook Page",
+          "blurb": "Ready Facebook Page",
+          "price": "Demo ৳2,500",
+          "stock": "Available",
+          "image": ""
+        },
+        {
+          "id": "product-5",
+          "title": "Ready YouTube Channel",
+          "blurb": "Ready YouTube Channel",
+          "price": "Demo ৳3,000",
+          "stock": "Out of stock",
+          "image": ""
+        }
+      ]
+    }
+  ]
+}

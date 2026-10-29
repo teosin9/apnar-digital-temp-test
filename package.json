@@ -1,0 +1,14 @@
+{
+  "description": "Apnar digital \u2014 TEMP Vercel test copy only. Separate from the original file and from the real deploy pack.",
+  "license": "UNLICENSED",
+  "main": "server.js",
+  "name": "apnar-digital-server",
+  "private": true,
+  "scripts": {
+    "start": "node server.js"
+  },
+  "version": "1.0.0",
+  "dependencies": {
+    "nodemailer": "^6.9.0"
+  }
+}

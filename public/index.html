@@ -1,0 +1,65 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Apnar digital — local</title><style>body{font-family:system-ui,sans-serif;background:#111;color:#eee;max-width:900px;margin:0 auto;padding:20px} a{color:#ff7a1a} .card{background:#1c1c1c;border:1px solid #333;border-radius:12px;padding:14px;margin:10px 0;cursor:pointer} img{max-width:100%;border-radius:8px} input,textarea{width:100%;padding:8px;margin:4px 0;background:#222;color:#eee;border:1px solid #444;border-radius:8px} button{background:#ff7a1a;color:#fff;border:0;padding:9px 16px;border-radius:8px;cursor:pointer}
+#modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);align-items:center;justify-content:center;z-index:10} #modal.open{display:flex} #modalBox{background:#1c1c1c;border:1px solid #444;border-radius:12px;padding:20px;max-width:480px;width:92%}
+#pdp{display:none} #pdp.open{display:block}</style></head>
+<body><h1>Apnar digital <small>(local test)</small></h1>
+<p>Browse freely — no login needed to look around. <a href="/admin">Admin panel</a> · <span id="me"></span> <button id="logoutBtn" style="display:none" onclick="logout()">Log out</button> <button id="deleteBtn" style="display:none" onclick="deleteAccount()">Delete my account</button></p>
+<div id="services"></div><div id="posts"></div>
+
+<!-- Login / signup modal: shown when a listing is tapped while logged out -->
+<div id="modal"><div id="modalBox">
+<h2>Log in to open this listing</h2>
+<p id="modalMsg">Please log in first. After login, the listing you tapped will open.</p>
+<p>New here? Sign up with email only — the server sends an 8-character password (numbers + letters + # @ * $) to that email (demo mode: saved server-side, not shown on this page).</p>
+<input id="email" placeholder="Email"><input id="pw" placeholder="Password (for login)" type="password">
+<button onclick="signup()">Sign up (email only)</button> <button onclick="login()">Log in</button> <button onclick="closeModal()">Cancel</button>
+<p><a href="#" onclick="event.preventDefault();forgotPassword()">Forgot password?</a> — a new 8-character password will be sent to your email, replacing the old one. Only that newest password will work.</p>
+<p id="authmsg"></p><p>First run? <a href="/admin-setup">Create admin account</a></p>
+</div></div>
+
+<!-- PDP detail: only filled from the server-gated /api/item/:id endpoint -->
+<div id="pdp" class="card"><button onclick="closePdp()">← Back to browsing</button><div id="pdpBody"></div></div>
+
+<script>
+let pendingItemId = localStorage.getItem('pendingItemId') || null;
+let loggedIn = false;
+async function api(p,m,b){const r=await fetch(p,{method:m||'GET',headers:{'Content-Type':'application/json'},body:b?JSON.stringify(b):undefined});let d={};try{d=await r.json()}catch(e){}return {status:r.status,data:d}}
+function esc(s){return String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function openModal(itemId,msg){pendingItemId=itemId;if(itemId)localStorage.setItem('pendingItemId',itemId);if(msg)modalMsg.textContent=msg;modal.classList.add('open')}
+function closeModal(){modal.classList.remove('open')}
+function closePdp(){pdp.classList.remove('open');pdpBody.innerHTML=''}
+async function openListing(id){
+  // TAP GATE (front-end): logged out -> login modal, remember the tap.
+  // SERVER GATE: /api/item/:id itself returns 401 when logged out, so detail is not leaked by API.
+  if(!loggedIn){openModal(id,'Please log in first. After login, the listing you tapped will open.');return}
+  const r=await api('/api/item/'+encodeURIComponent(id));
+  if(r.status===401){openModal(id,'Please log in first. After login, the listing you tapped will open.');return}
+  if(!r.data.item){pdpBody.innerHTML='<p>Listing not found.</p>';pdp.classList.add('open');return}
+  const it=r.data.item;
+  pdpBody.innerHTML=`<h2>${esc(it.title)}</h2>${it.image?`<img src="${esc(it.image)}">`:''}<p>${esc(it.blurb)}</p><p>${esc(it.detail)}</p>${it.price?`<p>${esc(it.price)} · ${esc(it.stock)}</p>`:''}<p><small>Service: ${esc(it.serviceTitle)}</small></p>`;
+  pdp.classList.add('open');window.scrollTo(0,0);
+}
+async function signup(){const r=await api('/api/signup','POST',{email:email.value});authmsg.textContent=r.data.message||r.data.error||''}
+async function forgotPassword(){const r=await api('/api/forgot-password','POST',{email:email.value});authmsg.textContent=r.data.message||'If an account exists, a new password was sent to your email.'}
+async function login(){
+  const r=await api('/api/login','POST',{email:email.value,password:pw.value});
+  if(!r.data.ok){authmsg.textContent=r.data.error||'Login failed';return}
+  authmsg.textContent='Logged in as '+r.data.user.email;await loadMe();closeModal();
+  // After successful login, open the exact listing that was tapped.
+  if(pendingItemId){const id=pendingItemId;pendingItemId=null;localStorage.removeItem('pendingItemId');openListing(id)}
+}
+async function logout(){await api('/api/logout','POST',{});await loadMe();closePdp()}
+async function deleteAccount(){if(!confirm('Delete your account permanently? Your login will stop working and you will need to sign up again.'))return;const r=await api('/api/delete-account','POST',{});alert(r.data.message||r.data.error||'');await loadMe();closePdp()}
+async function loadMe(){
+  const r=await api('/api/me');loggedIn=!!r.data.user;
+  me.textContent=r.data.user?('Logged in: '+r.data.user.email+' ('+r.data.user.role+')'):'Not logged in';
+  logoutBtn.style.display=loggedIn?'inline-block':'none';
+  deleteBtn.style.display=(loggedIn&&r.data.user.role==='user')?'inline-block':'none';
+}
+async function load(){
+  const s=await api('/api/services');
+  services.innerHTML=s.data.services.map(x=>`<section class="card" style="cursor:default"><h2>${esc(x.name)} — ${esc(x.title)}</h2><p>${esc(x.short)}</p><p>${esc(x.full)}</p>`+x.items.map(i=>`<div class="card" onclick="openListing('${i.id}')">${i.image?`<img src="${esc(i.image)}">`:''}<h3>${esc(i.title)}</h3><p>${esc(i.blurb)}</p>${i.price?`<p>${esc(i.price)} · ${esc(i.stock)}</p>`:''}<p><small>Tap to open (login required)</small></p></div>`).join('')+`</section>`).join('');
+  const p=await api('/api/posts');posts.innerHTML='<h2>Posts</h2>'+p.data.posts.map(x=>`<div class="card" style="cursor:default">${x.image?`<img src="${esc(x.image)}">`:''}<h3>${esc(x.title)}</h3><p>${esc(x.body)}</p></div>`).join('');
+}
+(async()=>{await loadMe();await load();})();
+</script></body></html>
